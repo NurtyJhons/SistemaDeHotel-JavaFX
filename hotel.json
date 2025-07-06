@@ -1,0 +1,27 @@
+{
+  "cabanas" : [ {
+    "codigo" : 1,
+    "nome" : "Básica",
+    "quantidadeCamas" : 3,
+    "tipoDasCamas" : [ "SOLTEIRO", "SOLTEIRO", "CASAL" ],
+    "hospedes" : [ {
+      "cpf" : "03791908773",
+      "nomeCompleto" : "Monica",
+      "idade" : 51,
+      "dataChegada" : "26/12/2024",
+      "dataSaida" : "02/01/2025"
+    } ]
+  }, {
+    "codigo" : 2,
+    "nome" : "Luxo",
+    "quantidadeCamas" : 1,
+    "tipoDasCamas" : [ "CASAL" ],
+    "hospedes" : [ {
+      "cpf" : "13544873701",
+      "nomeCompleto" : "João Vitor",
+      "idade" : 20,
+      "dataChegada" : "25/12/2024",
+      "dataSaida" : "01/01/2025"
+    } ]
+  } ]
+}
