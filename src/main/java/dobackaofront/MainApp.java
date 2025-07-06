@@ -200,20 +200,20 @@ public class MainApp extends Application {
         TabPane tabPane = new TabPane();
         Tab tabHospede = new Tab("Cadastro de Hóspede", cadastroHospedePane);
         Tab tabCabana = new Tab("Cadastro de Cabana", cadastroCabanaPane);
-        Tab tabExcluir = tabExcluir();
         Tab tabBuscarHospede = tabBuscarHospede();
         Tab tabListarHospedesCabana = tabListarHospedesCabana();
         Tab tabListarCabanas = tabListarCabanas();
+        Tab tabExcluir = tabExcluir();
 
         tabHospede.setClosable(false);
         tabCabana.setClosable(false);
         tabEditarHospede.setClosable(false);
         tabEditarCabana.setClosable(false);
-        tabExcluir.setClosable(false);
         tabBuscarHospede.setClosable(false);
         tabListarHospedesCabana.setClosable(false);
         tabListarCabanas.setClosable(false);
-        tabPane.getTabs().addAll(tabHospede, tabCabana, tabEditarHospede, tabEditarCabana, tabExcluir, tabBuscarHospede, tabListarHospedesCabana, tabListarCabanas);
+        tabExcluir.setClosable(false);
+        tabPane.getTabs().addAll(tabHospede, tabCabana, tabEditarHospede, tabEditarCabana, tabBuscarHospede, tabListarHospedesCabana, tabListarCabanas, tabExcluir);
 
         // -------------------- MENU AJUDA --------------------
 
@@ -434,7 +434,7 @@ public class MainApp extends Application {
 
         Separator separador = new Separator();
 
-        // ---------- NOVA SEÇÃO: EXCLUIR POR CPF ou NOME ----------
+        // ---------- SEÇÃO: EXCLUIR POR CPF ou NOME ----------
         Label labelBusca = new Label("Excluir hóspede por CPF ou Nome:");
         TextField campoBusca = new TextField();
         campoBusca.setPromptText("Digite CPF ou Nome");
@@ -557,6 +557,49 @@ public class MainApp extends Application {
         return new Tab("Buscar Hóspede", layout);
     }
 
+    private Hospede buscarHospedePorCPF(String cpf) {
+        for (Cabana c : hotel.getCabanas()) {
+            for (Hospede h : c.getHospedes()) {
+                if (h.getCpf().equals(cpf)) {
+                    return h;
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean validarCPF(String cpf) {
+        // Remove tudo que não for dígito
+        cpf = cpf.replaceAll("\\D", "");
+        if (cpf.length() != 11) return false;
+
+        // Verifica se todos os dígitos são iguais (ex: 11111111111)
+        if (cpf.chars().distinct().count() == 1) return false;
+
+        // Calcula os dígitos verificadores
+        try {
+            int sum = 0;
+            for (int i = 0; i < 9; i++) {
+                sum += Character.getNumericValue(cpf.charAt(i)) * (10 - i);
+            }
+            int firstCheckDigit = 11 - (sum % 11);
+            if (firstCheckDigit >= 10) firstCheckDigit = 0;
+            if (firstCheckDigit != Character.getNumericValue(cpf.charAt(9))) return false;
+
+            sum = 0;
+            for (int i = 0; i < 10; i++) {
+                sum += Character.getNumericValue(cpf.charAt(i)) * (11 - i);
+            }
+            int secondCheckDigit = 11 - (sum % 11);
+            if (secondCheckDigit >= 10) secondCheckDigit = 0;
+            if (secondCheckDigit != Character.getNumericValue(cpf.charAt(10))) return false;
+
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
     private Tab tabListarHospedesCabana(){
         ComboBox<Cabana> cabanaListarBox = new ComboBox<>();
         cabanaListarBox.getItems().addAll(hotel.getCabanas());
@@ -600,50 +643,6 @@ public class MainApp extends Application {
 
         return new Tab("Listar Cabanas", layout);
     }
-
-    private boolean validarCPF(String cpf) {
-        // Remove tudo que não for dígito
-        cpf = cpf.replaceAll("\\D", "");
-        if (cpf.length() != 11) return false;
-
-        // Verifica se todos os dígitos são iguais (ex: 11111111111)
-        if (cpf.chars().distinct().count() == 1) return false;
-
-        // Calcula os dígitos verificadores
-        try {
-            int sum = 0;
-            for (int i = 0; i < 9; i++) {
-                sum += Character.getNumericValue(cpf.charAt(i)) * (10 - i);
-            }
-            int firstCheckDigit = 11 - (sum % 11);
-            if (firstCheckDigit >= 10) firstCheckDigit = 0;
-            if (firstCheckDigit != Character.getNumericValue(cpf.charAt(9))) return false;
-
-            sum = 0;
-            for (int i = 0; i < 10; i++) {
-                sum += Character.getNumericValue(cpf.charAt(i)) * (11 - i);
-            }
-            int secondCheckDigit = 11 - (sum % 11);
-            if (secondCheckDigit >= 10) secondCheckDigit = 0;
-            if (secondCheckDigit != Character.getNumericValue(cpf.charAt(10))) return false;
-
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    private Hospede buscarHospedePorCPF(String cpf) {
-        for (Cabana c : hotel.getCabanas()) {
-            for (Hospede h : c.getHospedes()) {
-                if (h.getCpf().equals(cpf)) {
-                    return h;
-                }
-            }
-        }
-        return null;
-    }
-
     public static void main(String[] args) {
         launch(args);
     }
